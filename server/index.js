@@ -56,6 +56,36 @@ app.get('/:id/instructors', (req, res) => {
     });
 });
 
+app.post('/instructors', (req, res) => {
+  newInstructor = req.body;
+  return mysql.sequelize.authenticate()
+    .then(() => {
+      return mysql.Instructors.create(newInstructor)
+    })
+})
+
+app.patch('/instructors/:id', (req, res) => {
+  return mysql.sequelize.authenticate()
+    .then(() => {
+      return mysql.Instructors.update({
+        req.body
+      }, {
+        returning: true,
+        where: {id: req.params.id} 
+      })
+    })
+})
+
+app.delete('/instructors/:id', (req, res) => {
+  return mysql.sequelize.authenticate()
+    .then(() => {
+      return mysql.Instructors.destroy({
+        returning: true,
+        where: {id: req.params.id} 
+      })
+    })
+})
+
 app.listen(8081, () => {
   console.log("listening on port 8081");
 });
