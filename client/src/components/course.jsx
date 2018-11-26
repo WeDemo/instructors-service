@@ -31,7 +31,7 @@ class Course extends React.Component {
       hover = (<div className={styles.hoverLayer}>
         <img className={styles.instructorMiniPhoto} src={this.props.instInfo.photo_url}></img>
         <div className={styles.courseLectures}>{this.props.cInfo.lectures} lectures</div>
-        <div className={styles.courseHours}>{this.props.cInfo.num_hours} hours video</div>
+        <div className={styles.courseHours}>{this.props.cInfo.hours} hours video</div>
       </div>);
     } else {
       hover = null;
@@ -53,8 +53,8 @@ class Course extends React.Component {
         </div>
 
         <div className={styles.courseTextSection}>
-          <span className={styles.courseName}>{this.props.cInfo.course_name}</span>
-          <div className={styles.courseInstructor}>{this.props.instInfo.inst_name}</div>
+          <span className={styles.courseName}>{this.props.cInfo.name}</span>
+          <div className={styles.courseInstructor}>{this.props.instInfo.name}</div>
 
           <div className={styles.courseStatsBar}>
             <img className={styles.emptyStars}
@@ -68,8 +68,8 @@ class Course extends React.Component {
           </div>
 
           <div className={styles.coursePriceBar}>
-            <span className={styles.courseDiscPrice}>${this.props.cInfo.disc_price}</span>
-            <span className={styles.courseFullPrice}>${this.props.cInfo.full_price}</span>
+            <span className={styles.courseDiscPrice}>{this.props.cInfo.disc_price}</span>
+            <span className={styles.courseFullPrice}>{this.props.cInfo.full_price}</span>
           </div>
         </div>
       </div>

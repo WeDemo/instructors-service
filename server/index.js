@@ -1,7 +1,18 @@
 /* eslint-disable prefer-arrow-callback */
+require('newrelic');
 const express = require('express');
 const path = require('path');
-const mysql = require('../database/sqlizeIndex.js');
+const pgp = require('pg-promise')();
+
+const config = {
+  user: 'diana',
+  host: 'localhost',
+  database: 'udemy',
+  password: null,
+  port: 5432,
+};
+
+const db = pgp(config);
 
 const app = express();
 
@@ -12,79 +23,90 @@ app.get('/courses/:id', (req, res) => {
 });
 
 app.get('/:id/instructors', (req, res) => {
-  mysql.sequelize.authenticate()
-    .then(function getInstructorIds() {
-      return mysql.Join.findAll({ where: { course_id: req.params.id } });
-    })
-
-    .then(function getAllInstructors(data) {
-      const info = [];
-      const promises = [];
-
-      data.forEach(function getSingleInstructor(inst) {
-        const instructor = ({
-          id: inst.dataValues.inst_id,
-          instInfo: null,
-          courseInfo: null,
-        });
-        const newPromise = mysql.Instructors.findOne({ where: { id: inst.dataValues.inst_id } })
-
-          .then(function getInstructorInfo(instData) {
-            instructor.instInfo = instData;
-            return mysql.Join.findAll({ where: { inst_id: inst.dataValues.inst_id } });
+  const instQuery = ` select
+                        *
+                      from
+                        instructors
+                      inner join
+                        courses_inst
+                      on
+                        course_id = ${req.params.id} and
+                        instructors.id = courses_inst.inst_id;
+                      `;
+  db.any(instQuery)
+    .then((response) => {
+      //console.log(response);
+      //console.log('first query ok');
+      let result = [];
+      let count = 0;
+      response.map((row) => {
+        const courseQuery = `
+                            select
+                              *
+                            from
+                              courses
+                            inner join
+                              courses_inst
+                            on
+                              inst_id = ${row.id} and
+                              courses.id = courses_inst.course_id;
+                            `;
+        db.query(courseQuery)
+          .then((resp) => {
+            //console.log(resp);
+            //console.log('followup query ok');
+            count += 1;
+            let instWithCourses = Object.assign(row, { courseInfo: resp });
+            result.push(instWithCourses);
+            if (count === response.length) {
+              res.status(201);
+              res.send(result);
+            }
           })
-
-          .then(function getCourseInfo(courses) {
-            return mysql.Courses.findAll({
-              where: {
-                id: [courses
-                  .map(course => course.course_id)
-                  .filter(c => c != req.params.id)],
-              },
-            });
-          })
-
-          .then(function pushInfo(courseData) {
-            instructor.courseInfo = courseData;
-            info.push(instructor);
+          .catch((error) => {
+            console.log('followup error', error);
+            res.status(500);
+            res.send(error);
           });
-
-        promises.push(newPromise);
       });
-      return Promise.all(promises)
-        .then(() => res.send(info));
+    })
+    .catch((error) => {
+      console.log('overall error', error);
+      console.log(req.originalUrl);
+      res.status(500);
+      res.send(error);
     });
 });
 
-app.post('/instructors', (req, res) => {
-  newInstructor = req.body;
-  return mysql.sequelize.authenticate()
-    .then(() => {
-      return mysql.Instructors.create(newInstructor)
-    })
-})
+// app.post('/instructors', (req, res) => {
+//   newInstructor = req.body;
+//   return mysql.sequelize.authenticate()
+//     .then(() => {
+//       return mysql.Instructors.create(newInstructor)
+//     })
+// })
 
-app.patch('/instructors/:id', (req, res) => {
-  return mysql.sequelize.authenticate()
-    .then(() => {
-      return mysql.Instructors.update({
-        req.body
-      }, {
-        returning: true,
-        where: {id: req.params.id} 
-      })
-    })
-})
+// app.patch('/instructors/:id', (req, res) => {
+//   return mysql.sequelize.authenticate()
+//     .then(() => {
+//       return mysql.Instructors.update({
+//         req.body
+//       }, {
+//         returning: true,
+//         where: {id: req.params.id} 
+//       })
+//     })
+// })
 
-app.delete('/instructors/:id', (req, res) => {
-  return mysql.sequelize.authenticate()
-    .then(() => {
-      return mysql.Instructors.destroy({
-        returning: true,
-        where: {id: req.params.id} 
-      })
-    })
-})
+// app.delete('/instructors/:id', (req, res) => {
+//   return mysql.sequelize.authenticate()
+//     .then(() => {
+//       return mysql.Instructors.destroy({
+//         returning: true,
+//         where: {id: req.params.id} 
+//       })
+//     })
+// })
 
 app.listen(8081, () => {
   console.log("listening on port 8081");

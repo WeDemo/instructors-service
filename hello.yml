@@ -1,0 +1,17 @@
+config:
+  target: 'http://localhost:8081'
+  phases:
+    - duration: 60
+      arrivalRate: 10
+      rampto: 1000
+    - duration: 300
+      arrivalRate: 1000
+  processor: "./genRandNum.js"
+scenarios:
+  - name: 'browse random course'
+    flow:
+    - function: getRandNum
+    - get:
+        url: "/{{courseId}}/instructors"
+        json:
+            courseId: "{{ courseId }}"

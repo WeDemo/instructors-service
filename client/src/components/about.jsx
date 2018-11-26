@@ -24,6 +24,7 @@ class About extends React.Component {
     };
     this.handleClick = this.handleClick.bind(this);
     this.renderStats = this.renderStats.bind(this);
+    console.log('about const', this.props.info);
   }
 
   handleClick() {
@@ -49,7 +50,7 @@ class About extends React.Component {
         addCommas(this.props.info.students),
         addCommas(this.props.info.courses)];
 
-      return < Stat key={i} stat={stats[i]} text={title}
+      return <Stat key={i} stat={stats[i]} text={title}
         image={`https://s3-us-west-1.amazonaws.com/u-demo/${images[i]}.png`} />;
     });
   }
@@ -70,7 +71,7 @@ class About extends React.Component {
           <div className={styles.instructorName}>{this.props.info.inst_name}</div>
           <div className={styles.instructorTitle}>{this.props.info.title}</div>
           <div className={`${styles.instructorBlurb} ${styles[this.state.expand]}`}>
-              {this.props.info.blurb.split('\n').map((p, i) => <p key={i}>{p}</p>)}
+              {this.props.info.description.split('\n').map((p, i) => <p key={i}>{p}</p>)}
             <div className={`${styles.moreContainer} ${styles[this.state.box]}`}>
               <div className={styles.moreBlurb} onClick={this.handleClick}>+ See more</div>
             </div>
@@ -85,12 +86,12 @@ export default About;
 About.propTypes = {
   info: PropTypes.shape({
     photo_url: PropTypes.string,
-    rating: PropTypes.string,
+    rating: PropTypes.number,
     reviews: PropTypes.number,
     students: PropTypes.number,
     courses: PropTypes.number,
     inst_name: PropTypes.string,
     title: PropTypes.string,
-    blurb: PropTypes.string,
+    description: PropTypes.string,
   }),
 };

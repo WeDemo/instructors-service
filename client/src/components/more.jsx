@@ -7,11 +7,11 @@ const More = props => (
   <div className={styles.instructorCoursesContainer}>
     {props.info.courseInfo.length
       ? <div className={styles.instructorCoursesHeader}>
-        More Courses by {props.info.instInfo.inst_name}</div>
+        More Courses by {props.info.name}</div>
       : null}
     {props.info.courseInfo
       .slice(0, 3)
-      .map((course, i) => < Course key={i} cInfo={course} instInfo={props.info.instInfo} />)
+      .map((course, i) => <Course key={i} cInfo={course} instInfo={props.info} />)
     }
   </div>
 );
@@ -26,7 +26,7 @@ More.propTypes = {
       reviews: PropTypes.number,
       students: PropTypes.number,
       courses: PropTypes.number,
-      inst_name: PropTypes.string,
+      name: PropTypes.string,
       title: PropTypes.string,
       blurb: PropTypes.string,
     }),

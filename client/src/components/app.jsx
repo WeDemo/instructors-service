@@ -19,17 +19,20 @@ class App extends React.Component {
   }
 
   update() {
+    console.log('pre', this.state.instructors);
     fetch('/' + window.location.pathname.split('/')[2] + '/instructors')
       .then(response => response.json())
       .then((data) => {
         this.setState({
           instructors: data,
         });
+        console.log('post', this.state.instructors);
       });
   }
 
   renderInstructors() {
     let instructors;
+    console.log('render', this.state.instructors);
     if (this.state.instructors) {
       instructors = [
         <div key={'header'} className={styles.aboutHeader}>
@@ -37,7 +40,7 @@ class App extends React.Component {
         </div>,
         this.state.instructors
           .map((inst, i) => <div key={i} className={styles.aboutInstructor}>
-        < About key={i} info={this.state.instructors[i].instInfo} /></div>),
+        <About key={i} info={this.state.instructors[i]} /></div>),
       ];
     } else {
       instructors = null;
@@ -49,7 +52,7 @@ class App extends React.Component {
     let courses;
     if (this.state.instructors) {
       courses = this.state.instructors.slice(0, 3)
-        .map((inst, i) => < More key={i} info={this.state.instructors[i]} />);
+        .map((inst, i) => <More key={i} info={this.state.instructors[i]} />);
     } else {
       courses = null;
     }
