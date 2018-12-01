@@ -19,20 +19,17 @@ class App extends React.Component {
   }
 
   update() {
-    console.log('pre', this.state.instructors);
     fetch('/' + window.location.pathname.split('/')[2] + '/instructors')
       .then(response => response.json())
       .then((data) => {
         this.setState({
           instructors: data,
         });
-        console.log('post', this.state.instructors);
       });
   }
 
   renderInstructors() {
     let instructors;
-    console.log('render', this.state.instructors);
     if (this.state.instructors) {
       instructors = [
         <div key={'header'} className={styles.aboutHeader}>

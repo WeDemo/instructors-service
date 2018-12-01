@@ -24,7 +24,7 @@ class About extends React.Component {
     };
     this.handleClick = this.handleClick.bind(this);
     this.renderStats = this.renderStats.bind(this);
-    console.log('about const', this.props.info);
+    console.log(props);
   }
 
   handleClick() {
@@ -46,7 +46,7 @@ class About extends React.Component {
     return rows.map((title, i) => {
       const images = ['blackstar', 'chat', 'user', 'play'];
       const stats = [addCommas(this.props.info.rating),
-        addCommas(this.props.info.reviews),
+        addCommas(this.props.info.inst_reviews),
         addCommas(this.props.info.students),
         addCommas(this.props.info.courses)];
 
@@ -59,7 +59,7 @@ class About extends React.Component {
     return (
       <div className={styles.instructor}>
         <div className={styles.infoPhoto}>
-          <img className={styles.instructorPhoto} src={this.props.info.photo_url}></img>
+          <img className={styles.instructorPhoto} src={this.props.info.inst_photo}></img>
           <table className={styles.instructorInfo}>
             <tbody>
               {this.renderStats()}
